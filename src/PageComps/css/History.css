@@ -1,0 +1,11 @@
+.skeleton-box {
+  width: 100%;
+  height: 500px;
+  max-width: 100dvw;
+  padding: 4rem 1rem;
+  border: 3px dashed #bbb;
+  text-align: center;
+  font-size: 2.25rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+}
