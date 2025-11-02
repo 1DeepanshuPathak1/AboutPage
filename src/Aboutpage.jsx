@@ -5,9 +5,10 @@ import History from './PageComps/History'
 export default function Aboutpage() {
   return (
     <main>
-      <Introduction />
-      <Profiles />
+      {/* <Introduction /> */}
+      {/* <Profiles /> */}
       <History />
     </main>
   )
 }
+
