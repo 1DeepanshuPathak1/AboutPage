@@ -1,0 +1,399 @@
+
+/* History.css - Dark Theme with Scroll */
+.about-us-page {
+  min-height: 100vh;
+  background: #000000;
+  color: #ffffff;
+}
+
+/* Header */
+.about-header {
+  padding: 5rem 0 3rem;
+  text-align: center;
+  background: #0a0a0a;
+  border-bottom: 1px solid #1a1a1a;
+}
+
+.header-content {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+.page-title {
+  font-size: clamp(2.5rem, 5vw, 4rem);
+  font-weight: 800;
+  color: #ffffff;
+  margin-bottom: 1rem;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+}
+
+.page-subtitle {
+  font-size: 1.25rem;
+  color: #cccccc;
+  font-weight: 400;
+  max-width: 600px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
+/* Container */
+.container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+/* Mission Section */
+.mission-section {
+  padding: 4rem 0;
+  background: #000000;
+}
+
+.mission-content {
+  max-width: 800px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.mission-text h2 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #ffffff;
+  margin-bottom: 2rem;
+}
+
+.mission-text p {
+  font-size: 1.125rem;
+  color: #cccccc;
+  line-height: 1.7;
+  margin-bottom: 3rem;
+}
+
+.mission-stats {
+  display: flex;
+  justify-content: center;
+  gap: 4rem;
+  margin-top: 3rem;
+}
+
+.mission-stat {
+  text-align: center;
+}
+
+.stat-number {
+  display: block;
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #ffffff;
+  margin-bottom: 0.5rem;
+}
+
+.stat-label {
+  font-size: 0.875rem;
+  color: #999999;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Team Section with Scroll */
+.team-section {
+  padding: 4rem 0;
+  background: #0a0a0a;
+  min-height: 80vh;
+}
+
+.section-header {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.section-header h2 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #ffffff;
+  margin-bottom: 1rem;
+}
+
+.section-header p {
+  font-size: 1.125rem;
+  color: #cccccc;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+/* Batch Navigation */
+.batch-navigation {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 3rem;
+  flex-wrap: wrap;
+}
+
+.batch-button {
+  padding: 0.75rem 1.5rem;
+  background: #1a1a1a;
+  border: 1px solid #333333;
+  color: #ffffff;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.batch-button:hover {
+  background: #333333;
+  border-color: #555555;
+}
+
+/* Scrollable Team Container */
+.team-scroll-container {
+  max-height: 70vh;
+  overflow-y: auto;
+  padding: 1rem;
+  margin: 0 -1rem;
+}
+
+.team-scroll-container::-webkit-scrollbar {
+  width: 8px;
+}
+
+.team-scroll-container::-webkit-scrollbar-track {
+  background: #1a1a1a;
+  border-radius: 4px;
+}
+
+.team-scroll-container::-webkit-scrollbar-thumb {
+  background: #333333;
+  border-radius: 4px;
+}
+
+.team-scroll-container::-webkit-scrollbar-thumb:hover {
+  background: #555555;
+}
+
+/* Batch Sections */
+.batch-section {
+  margin-bottom: 4rem;
+}
+
+.batch-section:last-child {
+  margin-bottom: 0;
+}
+
+.batch-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #ffffff;
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid #333333;
+}
+
+/* Team Grid */
+.team-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+
+.team-member {
+  transition: transform 0.3s ease;
+}
+
+.team-member:hover {
+  transform: translateY(-2px);
+}
+
+/* Timeline Section */
+.timeline-section {
+  padding: 4rem 0;
+  background: #000000;
+}
+
+/* Domains Section */
+.domains-section {
+  padding: 4rem 0;
+  background: #0a0a0a;
+}
+
+.domains-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2rem;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.domain-card {
+  background: #1a1a1a;
+  padding: 2rem;
+  border: 1px solid #333333;
+  border-radius: 0.5rem;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+.domain-card:hover {
+  border-color: #555555;
+  transform: translateY(-2px);
+}
+
+.domain-icon {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+}
+
+.domain-card h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #ffffff;
+  margin-bottom: 0.5rem;
+}
+
+.domain-count {
+  color: #999999;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+/* Footer */
+.about-footer {
+  padding: 2rem 0;
+  border-top: 1px solid #1a1a1a;
+  background: #000000;
+}
+
+.footer-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.footer-content p {
+  color: #999999;
+  font-size: 0.875rem;
+}
+
+.footer-links {
+  display: flex;
+  gap: 2rem;
+}
+
+.footer-links a {
+  color: #cccccc;
+  text-decoration: none;
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: color 0.3s ease;
+}
+
+.footer-links a:hover {
+  color: #ffffff;
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+  .team-grid {
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  }
+}
+
+@media (max-width: 968px) {
+  .mission-stats {
+    gap: 2rem;
+  }
+  
+  .team-grid {
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.5rem;
+  }
+  
+  .batch-navigation {
+    gap: 0.5rem;
+  }
+  
+  .batch-button {
+    padding: 0.5rem 1rem;
+    font-size: 0.8rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .about-header {
+    padding: 3rem 0 2rem;
+  }
+  
+  .mission-section,
+  .team-section,
+  .timeline-section,
+  .domains-section {
+    padding: 3rem 0;
+  }
+  
+  .mission-stats {
+    flex-direction: column;
+    gap: 2rem;
+  }
+  
+  .team-grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+  
+  .domains-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  
+  .footer-content {
+    flex-direction: column;
+    text-align: center;
+  }
+  
+  .footer-links {
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  
+  .team-scroll-container {
+    max-height: 60vh;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: 0 0.5rem;
+  }
+  
+  .page-title {
+    font-size: 2rem;
+  }
+  
+  .page-subtitle {
+    font-size: 1.125rem;
+  }
+  
+  .mission-text h2,
+  .section-header h2 {
+    font-size: 2rem;
+  }
+  
+  .batch-navigation {
+    justify-content: flex-start;
+    overflow-x: auto;
+    padding-bottom: 0.5rem;
+  }
+  
+  .team-scroll-container {
+    margin: 0 -0.5rem;
+    padding: 0.5rem;
+  }
+}
