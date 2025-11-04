@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
-import { Users, Target, Rocket } from 'lucide-react';
+import { Users, Target, Rocket, Sparkles, Zap, Heart } from 'lucide-react';
 
 // ProfileCard Component
 const ProfileCard = ({ member, showUserInfo, enableTilt }) => {
@@ -52,33 +52,25 @@ const HorizontalTeamScroll = ({ members }) => {
   const targetRef = useRef(null);
   const { scrollYProgress } = useScroll({
     target: targetRef,
-    offset: ["start end", "end start"] // Keep the same offset but adjust the animation range
+    offset: ["start center", "end end"]
   });
 
-  const totalWidth = members.length * 300;
-  const containerWidth = 1200; // Approximate container width
-  const endPosition = -(totalWidth - containerWidth + 200); // Add padding to ensure all cards are visible
+  const totalWidth = members.length * 296; // 280px card + 16px gap
+  const viewportWidth = typeof window !== 'undefined' ? window.innerWidth : 1200;
+  const scrollDistance = totalWidth - viewportWidth + 200;
 
   const x = useTransform(
     scrollYProgress, 
     [0, 1], 
-    ["20%", `${endPosition}px`] // Start with some padding, end with calculated position
+    ["0%", `-${scrollDistance}px`]
   );
 
   const progressWidth = useTransform(scrollYProgress, [0, 1], ["0%", "100%"]);
   const progressPercent = useTransform(scrollYProgress, (v) => Math.round(v * 100));
 
   return (
-    <section ref={targetRef} className="relative" style={{ height: '200vh' }}> {/* Increased height for longer scroll */}
+    <section ref={targetRef} className="relative" style={{ height: '250vh' }}>
       <div className="sticky top-0 flex h-screen items-center overflow-hidden">
-        {/* Progress Line */}
-        <div className="absolute left-0 right-0 bottom-32 h-px bg-neutral-800 mx-8 md:mx-12 z-0">
-          <motion.div
-            style={{ width: progressWidth }}
-            className="absolute left-0 top-0 h-full bg-neutral-100 transition-all duration-150"
-          />
-        </div>
-
         <motion.div style={{ x }} className="flex gap-6 px-8 md:px-12">
           {members.map((member) => (
             <ProfileCard
@@ -359,79 +351,151 @@ export default function TeamShowcase() {
 
   return (
     <div className="min-h-screen bg-neutral-950">
-      {/* About Us Section */}
-      <section className="py-20 px-4 md:px-8">
-        <div className="max-w-6xl mx-auto">
+      {/* About Us Section - Enhanced */}
+      <section className="relative py-32 px-4 md:px-8 overflow-hidden">
+        {/* Animated Background Elements */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <motion.div
+            animate={{
+              scale: [1, 1.2, 1],
+              rotate: [0, 90, 0],
+              opacity: [0.03, 0.05, 0.03]
+            }}
+            transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+            className="absolute top-20 -left-20 w-96 h-96 bg-blue-500 rounded-full blur-3xl"
+          />
+          <motion.div
+            animate={{
+              scale: [1, 1.3, 1],
+              rotate: [0, -90, 0],
+              opacity: [0.03, 0.05, 0.03]
+            }}
+            transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
+            className="absolute bottom-20 -right-20 w-96 h-96 bg-purple-500 rounded-full blur-3xl"
+          />
+        </div>
+
+        <div className="max-w-6xl mx-auto relative z-10">
           {/* Hero */}
-          <div className="text-center mb-16">
-            <motion.h1 
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="text-5xl md:text-6xl font-bold text-neutral-100 mb-6"
+          <div className="text-center mb-20">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.5 }}
+              className="inline-flex items-center gap-2 px-4 py-2 bg-neutral-900/50 backdrop-blur-sm border border-neutral-800 rounded-full mb-6"
             >
-              We Build The Future
+              <Sparkles className="w-4 h-4 text-yellow-400" />
+              <span className="text-sm text-neutral-300">Building Tomorrow, Today</span>
+            </motion.div>
+            
+            <motion.h1 
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+              className="text-6xl md:text-7xl lg:text-8xl font-bold text-neutral-100 mb-8 leading-tight"
+            >
+              We Build The{" "}
+              <span className="relative inline-block">
+                <span className="relative z-10 bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
+                  Future
+                </span>
+                <motion.span
+                  initial={{ scaleX: 0 }}
+                  animate={{ scaleX: 1 }}
+                  transition={{ duration: 0.8, delay: 0.8 }}
+                  className="absolute bottom-2 left-0 w-full h-3 bg-gradient-to-r from-blue-500/20 via-purple-500/20 to-pink-500/20 -z-10"
+                />
+              </span>
             </motion.h1>
+            
             <motion.p 
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.1 }}
-              className="text-xl text-neutral-400 max-w-3xl mx-auto"
+              transition={{ duration: 0.6, delay: 0.4 }}
+              className="text-xl md:text-2xl text-neutral-400 max-w-3xl mx-auto leading-relaxed"
             >
               A collective of 70 passionate innovators, designers, and creators pushing the boundaries of what's possible.
             </motion.p>
           </div>
 
-          {/* Three Columns */}
-          <div className="grid md:grid-cols-3 gap-8 mb-16">
+          {/* Three Columns - Enhanced */}
+          <div className="grid md:grid-cols-3 gap-6">
             <motion.div 
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 40 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2 }}
-              className="bg-neutral-900 rounded-xl p-8 border border-neutral-800"
+              transition={{ duration: 0.6, delay: 0.5 }}
+              whileHover={{ y: -8, transition: { duration: 0.3 } }}
+              className="relative group"
             >
-              <div className="w-12 h-12 rounded-lg bg-blue-500/10 flex items-center justify-center mb-4">
-                <Users className="w-6 h-6 text-blue-400" />
+              <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 to-blue-600/5 rounded-2xl blur-xl group-hover:blur-2xl transition-all duration-300 opacity-0 group-hover:opacity-100" />
+              <div className="relative bg-neutral-900/80 backdrop-blur-sm rounded-2xl p-8 border border-neutral-800 group-hover:border-blue-500/50 transition-all duration-300">
+                <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-blue-500/20 to-blue-600/10 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                  <Users className="w-7 h-7 text-blue-400" />
+                </div>
+                <h3 className="text-2xl font-bold text-neutral-100 mb-4 group-hover:text-blue-400 transition-colors">
+                  Who We Are
+                </h3>
+                <p className="text-neutral-400 text-base leading-relaxed">
+                  A diverse community spanning media, technology, design, and management. United by curiosity and driven by innovation, we transform ideas into reality.
+                </p>
+                <motion.div
+                  initial={{ width: 0 }}
+                  whileHover={{ width: "100%" }}
+                  className="h-0.5 bg-gradient-to-r from-blue-500 to-transparent mt-6"
+                />
               </div>
-              <h3 className="text-xl font-semibold text-neutral-100 mb-3">
-                Who We Are
-              </h3>
-              <p className="text-neutral-400 text-sm leading-relaxed">
-                We're a diverse community spanning media, technology, design, and management. United by curiosity and driven by innovation, we transform ideas into reality.
-              </p>
             </motion.div>
 
             <motion.div 
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 40 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3 }}
-              className="bg-neutral-900 rounded-xl p-8 border border-neutral-800"
+              transition={{ duration: 0.6, delay: 0.6 }}
+              whileHover={{ y: -8, transition: { duration: 0.3 } }}
+              className="relative group"
             >
-              <div className="w-12 h-12 rounded-lg bg-purple-500/10 flex items-center justify-center mb-4">
-                <Rocket className="w-6 h-6 text-purple-400" />
+              <div className="absolute inset-0 bg-gradient-to-br from-purple-500/10 to-purple-600/5 rounded-2xl blur-xl group-hover:blur-2xl transition-all duration-300 opacity-0 group-hover:opacity-100" />
+              <div className="relative bg-neutral-900/80 backdrop-blur-sm rounded-2xl p-8 border border-neutral-800 group-hover:border-purple-500/50 transition-all duration-300">
+                <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-purple-500/20 to-purple-600/10 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                  <Zap className="w-7 h-7 text-purple-400" />
+                </div>
+                <h3 className="text-2xl font-bold text-neutral-100 mb-4 group-hover:text-purple-400 transition-colors">
+                  What We Do
+                </h3>
+                <p className="text-neutral-400 text-base leading-relaxed">
+                  We craft exceptional digital experiences, build cutting-edge applications, and create compelling content that resonates. From concept to launch, we deliver excellence.
+                </p>
+                <motion.div
+                  initial={{ width: 0 }}
+                  whileHover={{ width: "100%" }}
+                  className="h-0.5 bg-gradient-to-r from-purple-500 to-transparent mt-6"
+                />
               </div>
-              <h3 className="text-xl font-semibold text-neutral-100 mb-3">
-                What We Do
-              </h3>
-              <p className="text-neutral-400 text-sm leading-relaxed">
-                We craft exceptional digital experiences, build cutting-edge applications, and create compelling content that resonates. From concept to launch, we deliver excellence.
-              </p>
             </motion.div>
 
             <motion.div 
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 40 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.4 }}
-              className="bg-neutral-900 rounded-xl p-8 border border-neutral-800"
+              transition={{ duration: 0.6, delay: 0.7 }}
+              whileHover={{ y: -8, transition: { duration: 0.3 } }}
+              className="relative group"
             >
-              <div className="w-12 h-12 rounded-lg bg-green-500/10 flex items-center justify-center mb-4">
-                <Target className="w-6 h-6 text-green-400" />
+              <div className="absolute inset-0 bg-gradient-to-br from-pink-500/10 to-pink-600/5 rounded-2xl blur-xl group-hover:blur-2xl transition-all duration-300 opacity-0 group-hover:opacity-100" />
+              <div className="relative bg-neutral-900/80 backdrop-blur-sm rounded-2xl p-8 border border-neutral-800 group-hover:border-pink-500/50 transition-all duration-300">
+                <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-pink-500/20 to-pink-600/10 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                  <Heart className="w-7 h-7 text-pink-400" />
+                </div>
+                <h3 className="text-2xl font-bold text-neutral-100 mb-4 group-hover:text-pink-400 transition-colors">
+                  Our Mission
+                </h3>
+                <p className="text-neutral-400 text-base leading-relaxed">
+                  To empower creators, innovate fearlessly, and build products that make a meaningful impact. We're not just building projects—we're shaping the future.
+                </p>
+                <motion.div
+                  initial={{ width: 0 }}
+                  whileHover={{ width: "100%" }}
+                  className="h-0.5 bg-gradient-to-r from-pink-500 to-transparent mt-6"
+                />
               </div>
-              <h3 className="text-xl font-semibold text-neutral-100 mb-3">
-                Our Mission
-              </h3>
-              <p className="text-neutral-400 text-sm leading-relaxed">
-                To empower creators, innovate fearlessly, and build products that make a meaningful impact. We're not just building projects—we're shaping the future.
-              </p>
             </motion.div>
           </div>
         </div>
