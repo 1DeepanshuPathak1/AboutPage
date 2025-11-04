@@ -52,7 +52,7 @@ const HorizontalTeamScroll = ({ members }) => {
   const targetRef = useRef(null);
   const { scrollYProgress } = useScroll({
     target: targetRef,
-    offset: ["start center", "end end"]
+    offset: ["start start", "end end"]
   });
 
   const totalWidth = members.length * 296; // 280px card + 16px gap
@@ -62,14 +62,14 @@ const HorizontalTeamScroll = ({ members }) => {
   const x = useTransform(
     scrollYProgress, 
     [0, 1], 
-    ["0%", `-${scrollDistance}px`]
+    ["0px", `-${scrollDistance}px`]
   );
 
   const progressWidth = useTransform(scrollYProgress, [0, 1], ["0%", "100%"]);
   const progressPercent = useTransform(scrollYProgress, (v) => Math.round(v * 100));
 
   return (
-    <section ref={targetRef} className="relative" style={{ height: '250vh' }}>
+    <section ref={targetRef} className="relative" style={{ height: '300vh' }}>
       <div className="sticky top-0 flex h-screen items-center overflow-hidden">
         <motion.div style={{ x }} className="flex gap-6 px-8 md:px-12">
           {members.map((member) => (
