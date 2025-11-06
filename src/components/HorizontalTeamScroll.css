@@ -1,13 +1,16 @@
 .scroll-section {
   position: relative;
   will-change: transform;
-  z-index: 100;
+  z-index: 50;
+  height: 80vh;
+  display: flex;
+  align-items: center;
 }
 
 .scroll-container {
-  position: sticky;
-  top: 0;
-  height: 80vh;
+  position: relative;
+  width: 100%;
+  height: 100%;
   overflow: hidden;
   background-color: rgb(10, 10, 10);
   will-change: transform;
@@ -18,9 +21,26 @@
   transform: translate3d(0,0,0);
   -webkit-transform: translate3d(0,0,0);
   display: flex;
-  padding-top: 20px;
-  padding-bottom: 20px;
+  padding-top: 50px;
+  padding-bottom: 50px;
   align-items: center;
+  z-index: 10;
+}
+
+.cards-wrapper {
+  display: flex;
+  gap: 50px;
+  padding: 0 32px;
+  will-change: transform;
+}
+
+.card-item {
+  width: 280px;
+  max-height: 75vh;
+  flex-shrink: 0;
+  will-change: transform;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
 }
 
 .progress-bar {

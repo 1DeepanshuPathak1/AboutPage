@@ -18,7 +18,7 @@ export default function Profiles() {
   const roles = ['all', 'Media', 'Tech', 'Manager', 'Design'];
 
   return (
-    <div className="min-h-screen bg-neutral-950 will-change-transform pt-16">
+    <div className="profiles-wrapper">
       <TeamFilters 
         batches={batches}
         roles={roles}

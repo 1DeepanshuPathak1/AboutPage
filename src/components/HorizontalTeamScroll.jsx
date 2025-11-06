@@ -1,21 +1,30 @@
-import { useRef, useState, useCallback, useEffect, useLayoutEffect } from 'react';
-import { motion, useScroll, useSpring, useTransform } from 'framer-motion';
+import { useRef, useState, useLayoutEffect, useEffect } from 'react';
+import { motion, useSpring, useMotionValue, useTransform } from 'framer-motion';
 import ProfileCard from './ProfileCard';
 import './HorizontalTeamScroll.css';
 
 const HorizontalTeamScroll = ({ members }) => {
-  const targetRef = useRef(null);
+  const sectionRef = useRef(null);
   const containerRef = useRef(null);
   const [containerWidth, setContainerWidth] = useState(0);
   const [windowWidth, setWindowWidth] = useState(0);
+  const [isHovered, setIsHovered] = useState(false);
 
   const cardWidth = 280;
   const cardGap = 50;
 
+  const scrollProgress = useMotionValue(0);
+  const smoothProgress = useSpring(scrollProgress, {
+    damping: 50,
+    mass: 0.5,
+    stiffness: 200,
+    restDelta: 0.001
+  });
+
   useLayoutEffect(() => {
     const updateSize = () => {
       if (containerRef.current) {
-        const totalWidth = members.length * (cardWidth + cardGap) - cardGap;
+        const totalWidth = members.length * (cardWidth + cardGap) - cardGap + 64;
         setContainerWidth(totalWidth);
         setWindowWidth(window.innerWidth);
       }
@@ -23,66 +32,62 @@ const HorizontalTeamScroll = ({ members }) => {
     updateSize();
     window.addEventListener('resize', updateSize);
     return () => window.removeEventListener('resize', updateSize);
-  }, [members.length, cardWidth, cardGap]);
+  }, [members.length]);
 
-  const { scrollYProgress } = useScroll({
-    target: targetRef,
-    offset: ["start start", "end end"]
-  });
+  useEffect(() => {
+    const section = sectionRef.current;
+    if (!section) return;
 
-  const smoothProgress = useSpring(scrollYProgress, {
-    damping: 50,
-    mass: 0.5,
-    stiffness: 200,
-    restDelta: 0.001
-  });
+    const handleWheel = (e) => {
+      if (!isHovered) return;
 
-  const distance = containerWidth - windowWidth;
-  const x = useTransform(smoothProgress, [0, 1], [0, -distance]);
-  const springX = useSpring(x, {
-    damping: 50,
-    mass: 0.5,
-    stiffness: 200,
-    restDelta: 0.001
-  });
+      const delta = e.deltaY * 0.8;
+      const maxScroll = containerWidth - windowWidth;
+      const currentScroll = scrollProgress.get();
+      
+      if (currentScroll >= maxScroll && delta > 0) {
+        return;
+      }
+      
+      if (currentScroll <= 0 && delta < 0) {
+        return;
+      }
 
-  const progressWidth = useTransform(smoothProgress, [0, 1], ["0%", "100%"]);
+      e.preventDefault();
+      const newScroll = Math.max(0, Math.min(maxScroll, currentScroll + delta));
+      scrollProgress.set(newScroll);
+    };
 
-  const smoothConfig = {
-    damping: 50,
-    mass: 0.5,
-    stiffness: 200,
-    restDelta: 0.001
-  };
+    section.addEventListener('wheel', handleWheel, { passive: false });
+    
+    return () => {
+      section.removeEventListener('wheel', handleWheel);
+    };
+  }, [isHovered, containerWidth, windowWidth, scrollProgress]);
+
+  const x = useTransform(smoothProgress, (value) => -value);
+  const progressWidth = useTransform(smoothProgress, 
+    [0, containerWidth - windowWidth], 
+    ["0%", "100%"]
+  );
 
   return (
     <section 
-      ref={targetRef}
-      className="scroll-section" 
-      style={{ height: `${members.length * 80}vh` }}
+      ref={sectionRef}
+      className="scroll-section"
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
     >
       <div className="scroll-container">
         <motion.div 
           ref={containerRef}
-          style={{ 
-            x: springX,
-            gap: `${cardGap}px`,
-            display: 'flex',
-            padding: '0 32px'
-          }}
-          layoutScroll
+          className="cards-wrapper"
+          style={{ x }}
         >
           {members.map((member) => (
-            <motion.div 
+            <div 
               key={member.id} 
-              style={{ 
-                width: `${cardWidth}px`,
-                maxHeight: '75vh',
-                flexShrink: 0,
-                willChange: 'transform',
-                WebkitBackfaceVisibility: 'hidden',
-              }}
-              layout
+              className="card-item"
             >
               <ProfileCard
                 avatarUrl={member.avatarUrl}
@@ -102,7 +107,7 @@ const HorizontalTeamScroll = ({ members }) => {
                 batch={member.batch}
                 role={member.role}
               />
-            </motion.div>
+            </div>
           ))}
         </motion.div>
 
@@ -110,7 +115,6 @@ const HorizontalTeamScroll = ({ members }) => {
           <motion.div 
             style={{ width: progressWidth }} 
             className="progress-indicator"
-            transition={smoothConfig}
           />
         </div>
       </div>

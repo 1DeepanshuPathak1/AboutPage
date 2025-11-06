@@ -19,6 +19,7 @@
   align-items: center;
   justify-content: center;
   gap: 32px;
+  z-index: 200;
 }
 
 .filter-select {
