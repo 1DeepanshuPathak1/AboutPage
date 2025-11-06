@@ -18,7 +18,7 @@ export default function Profiles() {
   const roles = ['all', 'Media', 'Tech', 'Manager', 'Design'];
 
   return (
-    <div className="min-h-screen bg-neutral-950 will-change-transform">
+    <div className="min-h-screen bg-neutral-950 will-change-transform pt-16">
       <TeamFilters 
         batches={batches}
         roles={roles}
@@ -26,7 +26,6 @@ export default function Profiles() {
         activeRole={activeRole}
         setActiveFilter={setActiveFilter}
         setActiveRole={setActiveRole}
-        filteredMembersCount={filteredMembers.length}
       />
       <HorizontalTeamScroll members={filteredMembers} />
     </div>

@@ -24,7 +24,7 @@ export const teamMembers = [
     name: "Anurag",
     title: "App Developer",
     role: "Tech",
-    handle: "Nidhi",
+    handle: "Anurag",
     status: "Active",
     avatarUrl: "/src/utils/MemberImages/Anurag.png",
     batch: "Batch 1"
