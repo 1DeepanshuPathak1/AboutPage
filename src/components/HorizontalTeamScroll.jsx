@@ -99,6 +99,7 @@ const HorizontalTeamScroll = ({ members }) => {
             >
               <ProfileCard
                 avatarUrl={member.avatarUrl}
+                iconUrl={member.iconUrl}
                 name={member.name}
                 title={member.title}
                 handle={member.handle || member.name.toLowerCase().replace(/\s+/g, '')}

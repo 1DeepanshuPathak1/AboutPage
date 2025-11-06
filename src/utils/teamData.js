@@ -1,3 +1,5 @@
+import { CODE_ICON_PATTERN } from './iconPattern';
+
 export const teamMembers = [
   {
     id: 1,
@@ -7,6 +9,7 @@ export const teamMembers = [
     handle: "Lovish",
     status: "Active",
     avatarUrl: "/src/utils/MemberImages/Lovish.png",
+    iconUrl: CODE_ICON_PATTERN,
     batch: "Batch 1",
     memberDetails: {
       dateJoined: "23/10/2025",
@@ -26,6 +29,7 @@ export const teamMembers = [
     handle: "Nidhi",
     status: "Active",
     avatarUrl: "/src/utils/MemberImages/Nidhi.png",
+    iconUrl: CODE_ICON_PATTERN,
     batch: "Batch 1",
     memberDetails: {
       dateJoined: "23/10/2025",
@@ -45,6 +49,7 @@ export const teamMembers = [
     handle: "Anurag",
     status: "Active",
     avatarUrl: "/src/utils/MemberImages/Anurag.png",
+    iconUrl: CODE_ICON_PATTERN,
     batch: "Batch 1",
     memberDetails: {
       dateJoined: "23/10/2025",
@@ -64,6 +69,7 @@ export const teamMembers = [
     handle: "Sanya",
     status: "Active",
     avatarUrl: "/src/utils/MemberImages/Sanya.png",
+    iconUrl: CODE_ICON_PATTERN,
     batch: "Batch 1",
     memberDetails: {
       dateJoined: "23/10/2025",
@@ -83,6 +89,7 @@ export const teamMembers = [
     handle: "Varsha",
     status: "Active",
     avatarUrl: "/src/utils/MemberImages/Varsha.png",
+    iconUrl: CODE_ICON_PATTERN,
     batch: "Batch 1",
     memberDetails: {
       dateJoined: "23/10/2025",
@@ -102,6 +109,7 @@ export const teamMembers = [
     handle: "Ankur",
     status: "Active",
     avatarUrl: "/src/utils/MemberImages/Ankur.png",
+    iconUrl: CODE_ICON_PATTERN,
     batch: "Batch 1",
     memberDetails: {
       dateJoined: "23/10/2025",
@@ -121,6 +129,7 @@ export const teamMembers = [
     handle: "Suparn",
     status: "Active",
     avatarUrl: "/src/utils/MemberImages/Suparn.png",
+    iconUrl: CODE_ICON_PATTERN,
     batch: "Batch 1",
     memberDetails: {
       dateJoined: "23/10/2025",
@@ -140,6 +149,7 @@ export const teamMembers = [
     handle: "Bharat",
     status: "Active",
     avatarUrl: "/src/utils/MemberImages/Bharat.png",
+    iconUrl: CODE_ICON_PATTERN,
     batch: "Batch 1",
     memberDetails: {
       dateJoined: "23/10/2025",
@@ -159,6 +169,7 @@ export const teamMembers = [
     handle: "Raghavendra",
     status: "Active",
     avatarUrl: "/src/utils/MemberImages/Raghavendra.png",
+    iconUrl: CODE_ICON_PATTERN,
     batch: "Batch 1",
     memberDetails: {
       dateJoined: "23/10/2025",
@@ -178,6 +189,7 @@ export const teamMembers = [
     handle: "Sufyan",
     status: "Active",
     avatarUrl: "/src/utils/MemberImages/Sufyan.png",
+    iconUrl: CODE_ICON_PATTERN,
     batch: "Batch 1",
     memberDetails: {
       dateJoined: "23/10/2025",

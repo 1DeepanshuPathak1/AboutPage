@@ -126,15 +126,15 @@
   filter: brightness(0.66) contrast(1.33) saturate(0.33) opacity(0.5);
   animation: holo-bg 18s linear infinite;
   mix-blend-mode: color-dodge;
+  z-index: 1;
 }
 
 .pc-shine,
 .pc-shine::after {
   --space: 5%;
   --angle: -45deg;
-  transform: translate3d(0, 0, 1px);
+  transform: translate3d(0, 0, 0.1px);
   overflow: hidden;
-  z-index: 3;
   background: transparent;
   background-size: cover;
   background-position: center;
@@ -248,7 +248,7 @@
   );
   mix-blend-mode: overlay;
   filter: brightness(0.8) contrast(1.2);
-  z-index: 4;
+  z-index: 1;
 }
 
 .pc-avatar-content {
@@ -260,7 +260,7 @@
   display: flex;
   justify-content: center;
   align-items: flex-end;
-  z-index: 2;
+  z-index: 3;
   filter: contrast(1.1) brightness(1.1);
   transition: opacity 0.3s ease;
 }
@@ -310,7 +310,7 @@
   bottom: 12px;
   left: 12px;
   right: 12px;
-  z-index: 2;
+  z-index: 4;
   display: flex;
   align-items: center;
   justify-content: space-between;
