@@ -4,9 +4,9 @@ import History from './PageComps/History'
 
 export default function Aboutpage() {
   return (
-    <main>
-      {/* <Introduction /> */}
-      {/* <Profiles /> */}
+    <main className="will-change-transform">
+      <Introduction />
+      <Profiles />
       <History />
     </main>
   )

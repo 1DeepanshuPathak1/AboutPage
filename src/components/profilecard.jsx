@@ -28,7 +28,7 @@ const adjust = (value, fromMin, fromMax, toMin, toMax) =>
 const easeInOutCubic = x => (x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2);
 
 const ProfileCardComponent = ({
-  avatarUrl = 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400',
+  avatarUrl = 'https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?w=400&h=400&fit=crop',
   iconUrl = DEFAULT_ICON_URL,
   grainUrl = DEFAULT_GRAIN_URL,
   behindGradient,
@@ -38,7 +38,6 @@ const ProfileCardComponent = ({
   enableTilt = true,
   enableMobileTilt = true,
   mobileTiltSensitivity = 5,
-  miniAvatarUrl,
   name = 'Team Member',
   title = 'Role',
   handle = 'username',
@@ -269,7 +268,7 @@ const ProfileCardComponent = ({
               loading="lazy"
               onError={e => {
                 const target = e.target;
-                target.style.display = 'none';
+                target.src = 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=400&fit=crop';
               }}
             />
             {showUserInfo && (
@@ -277,7 +276,7 @@ const ProfileCardComponent = ({
                 <div className="pc-user-details">
                   <div className="pc-mini-avatar">
                     <img
-                      src={miniAvatarUrl || avatarUrl}
+                      src={avatarUrl}
                       alt={`${name || 'User'} mini avatar`}
                       loading="lazy"
                       onError={e => {

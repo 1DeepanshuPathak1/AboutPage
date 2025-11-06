@@ -1,10 +1,11 @@
-import React from 'react'
+import React from 'react';
+import AboutSection from '../components/AboutSection';
 import './css/Introduction.css'
 
 export default function Introduction() {
   return (
-    <section className="about-intro" id="introduction">
-      <div className="skeleton-box">INTRODUCTION</div>
-    </section>
-  )
+    <div className="min-h-screen bg-neutral-950 will-change-transform">
+      <AboutSection />
+    </div>
+  );
 }

@@ -1,11 +1,6 @@
-import React, { useState } from 'react';
-import AboutSection from '../components/AboutSection';
-import HorizontalTeamScroll from '../components/HorizontalTeamScroll';
+import React from 'react';
 import Timeline from '../components/Timeline';
-import TeamFilters from '../components/TeamFilters';
-import { generateTeamMembers } from '../utils/teamData';
 
-// Timeline data
 const timelineData = [
   {
     date: "January 2024",
@@ -69,37 +64,10 @@ const timelineData = [
   }
 ];
 
-const TeamShowcase = () => {
-  const [activeFilter, setActiveFilter] = useState('all');
-  const [activeRole, setActiveRole] = useState('all');
-
-  const teamMembers = generateTeamMembers();
-
-  // Filter members
-  const filteredMembers = teamMembers.filter(member => {
-    const batchMatch = activeFilter === 'all' || member.batch === activeFilter;
-    const roleMatch = activeRole === 'all' || member.role === activeRole;
-    return batchMatch && roleMatch;
-  });
-
-  // Get unique batches and roles
-  const batches = ['all', ...Array.from(new Set(teamMembers.map(m => m.batch)))];
-  const roles = ['all', 'Media', 'Tech', 'Manager', 'Design'];
-
+const History = () => {
   return (
-    <div className="min-h-screen bg-neutral-950">
-      <AboutSection />
-      <TeamFilters 
-        batches={batches}
-        roles={roles}
-        activeFilter={activeFilter}
-        activeRole={activeRole}
-        setActiveFilter={setActiveFilter}
-        setActiveRole={setActiveRole}
-        filteredMembersCount={filteredMembers.length}
-      />
-      <HorizontalTeamScroll members={filteredMembers} />
-      <section className="mt-16">
+    <div className="min-h-screen bg-neutral-950 will-change-transform">
+      <section className="pt-8 will-change-transform">
         <div className="text-center mb-8 px-4">
           <h2 className="text-3xl md:text-4xl font-bold text-neutral-100 mb-3">
             Our Journey
@@ -121,4 +89,4 @@ const TeamShowcase = () => {
   );
 };
 
-export default TeamShowcase;
+export default History;
