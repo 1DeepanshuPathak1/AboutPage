@@ -1,414 +1,321 @@
-import React, { useEffect, useRef, useCallback, useMemo, useState } from 'react';
+import React, { useEffect, useRef, useCallback, useMemo } from 'react';
+import './ProfileCard.css';
+
+const DEFAULT_BEHIND_GRADIENT =
+  'radial-gradient(farthest-side circle at var(--pointer-x) var(--pointer-y),hsla(266,100%,90%,var(--card-opacity)) 4%,hsla(266,50%,80%,calc(var(--card-opacity)*0.75)) 10%,hsla(266,25%,70%,calc(var(--card-opacity)*0.5)) 50%,hsla(266,0%,60%,0) 100%),radial-gradient(35% 52% at 55% 20%,#00ffaac4 0%,#073aff00 100%),radial-gradient(100% 100% at 50% 50%,#00c1ffff 1%,#073aff00 76%),conic-gradient(from 124deg at 50% 50%,#c137ffff 0%,#07c6ffff 40%,#07c6ffff 60%,#c137ffff 100%)';
+
+const DEFAULT_INNER_GRADIENT = 'linear-gradient(145deg,#60496e8c 0%,#71C4FF44 100%)';
+
+const DEFAULT_ICON_URL = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8ZGVmcz4KICAgIDxwYXR0ZXJuIGlkPSJncmlkIiB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHBhdHRlcm5Vbml0cz0idXNlclNwYWNlT25Vc2UiPgogICAgICA8cGF0aCBkPSJNIDIwIDAgTCAwIDAgMCAyMCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZmZmIiBzdHJva2Utd2lkdGg9IjEiIG9wYWNpdHk9IjAuMSIvPgogICAgPC9wYXR0ZXJuPgogIDwvZGVmcz4KICA8cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0idXJsKCNncmlkKSIvPgo8L3N2Zz4=';
+
+const DEFAULT_GRAIN_URL = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzMDAiIGhlaWdodD0iMzAwIj48ZmlsdGVyIGlkPSJhIj48ZmVUdXJidWxlbmNlIGJhc2VGcmVxdWVuY3k9Ii43NSIgc3RpdGNoVGlsZXM9InN0aXRjaCIgdHlwZT0iZnJhY3RhbE5vaXNlIi8+PGZlQ29sb3JNYXRyaXggdHlwZT0ic2F0dXJhdGUiIHZhbHVlcz0iMCIvPjwvZmlsdGVyPjxwYXRoIGQ9Ik0wIDBoMzAwdjMwMEgweiIgZmlsdGVyPSJ1cmwoI2EpIiBvcGFjaXR5PSIuMDUiLz48L3N2Zz4=';
 
 const ANIMATION_CONFIG = {
-  SMOOTH_DURATION: 800,
-  INITIAL_DURATION: 2000,
-  BOUNCE_DURATION: 450,
-  GLOW_DURATION: 3000,
+  SMOOTH_DURATION: 600,
+  INITIAL_DURATION: 1500,
   INITIAL_X_OFFSET: 70,
   INITIAL_Y_OFFSET: 60,
-  TILT_INTENSITY: 15,
-  HOVER_SCALE: 1.05,
-  DEPTH: 50,
+  DEVICE_BETA_OFFSET: 20
 };
 
 const clamp = (value, min = 0, max = 100) => Math.min(Math.max(value, min), max);
+
 const round = (value, precision = 3) => parseFloat(value.toFixed(precision));
 
 const adjust = (value, fromMin, fromMax, toMin, toMax) =>
   round(toMin + ((toMax - toMin) * (value - fromMin)) / (fromMax - fromMin));
 
-// Apple-style easing functions
-const easeOutQuart = (x) => 1 - Math.pow(1 - x, 4);
-const easeOutBack = (x) => {
-  const c1 = 1.70158;
-  const c3 = c1 + 1;
-  return 1 + c3 * Math.pow(x - 1, 3) + c1 * Math.pow(x - 1, 2);
-};
+const easeInOutCubic = x => (x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2);
 
-const MinimalProfileCard = ({
+const ProfileCardComponent = ({
   avatarUrl = 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400',
+  iconUrl = DEFAULT_ICON_URL,
+  grainUrl = DEFAULT_GRAIN_URL,
+  behindGradient,
+  innerGradient,
+  showBehindGradient = true,
   className = '',
   enableTilt = true,
-  name = 'Javi A. Torres',
-  description = 'Software engineer specializing in modern web technologies. Passionate about creating elegant solutions.',
+  enableMobileTilt = true,
+  mobileTiltSensitivity = 5,
+  miniAvatarUrl,
+  name = 'Team Member',
+  title = 'Role',
+  handle = 'username',
+  status = 'Active',
   contactText = 'Contact',
+  showUserInfo = true,
   onContactClick,
   batch,
-  role,
+  role
 }) => {
   const wrapRef = useRef(null);
   const cardRef = useRef(null);
-  const glowRef = useRef(null);
-  const [isHovered, setIsHovered] = useState(false);
+  const rafIdRef = useRef(null);
 
   const animationHandlers = useMemo(() => {
     if (!enableTilt) return null;
-    let rafId = null;
-    let glowRafId = null;
 
-    const updateCardTransform = (offsetX, offsetY, card, wrap, intensity = 1) => {
+    const updateCardTransform = (offsetX, offsetY, card, wrap) => {
       const width = card.clientWidth;
       const height = card.clientHeight;
+
       const percentX = clamp((100 / width) * offsetX);
       const percentY = clamp((100 / height) * offsetY);
+
       const centerX = percentX - 50;
       const centerY = percentY - 50;
-      
-      const rotateX = round(-(centerY / ANIMATION_CONFIG.TILT_INTENSITY) * intensity);
-      const rotateY = round((centerX / ANIMATION_CONFIG.TILT_INTENSITY) * intensity);
-      const scale = 1 + (ANIMATION_CONFIG.HOVER_SCALE - 1) * intensity;
-      
-      wrap.style.setProperty('--rotate-x', `${rotateX}deg`);
-      wrap.style.setProperty('--rotate-y', `${rotateY}deg`);
-      wrap.style.setProperty('--scale', scale);
-      wrap.style.setProperty('--translate-z', `${ANIMATION_CONFIG.DEPTH * intensity}px`);
-    };
 
-    const animateGlow = (wrap, intensity = 1) => {
-      const startTime = performance.now();
-      
-      const glowLoop = (currentTime) => {
-        const elapsed = currentTime - startTime;
-        const progress = (elapsed % ANIMATION_CONFIG.GLOW_DURATION) / ANIMATION_CONFIG.GLOW_DURATION;
-        const glowOpacity = 0.1 + Math.sin(progress * Math.PI * 2) * 0.05 * intensity;
-        
-        wrap.style.setProperty('--glow-opacity', glowOpacity);
-        glowRafId = requestAnimationFrame(glowLoop);
+      const properties = {
+        '--pointer-x': `${percentX}%`,
+        '--pointer-y': `${percentY}%`,
+        '--background-x': `${adjust(percentX, 0, 100, 35, 65)}%`,
+        '--background-y': `${adjust(percentY, 0, 100, 35, 65)}%`,
+        '--pointer-from-center': `${clamp(Math.hypot(percentY - 50, percentX - 50) / 50, 0, 1)}`,
+        '--pointer-from-top': `${percentY / 100}`,
+        '--pointer-from-left': `${percentX / 100}`,
+        '--rotate-x': `${round(-(centerX / 5))}deg`,
+        '--rotate-y': `${round(centerY / 4)}deg`
       };
-      
-      glowRafId = requestAnimationFrame(glowLoop);
+
+      Object.entries(properties).forEach(([property, value]) => {
+        wrap.style.setProperty(property, value);
+      });
     };
 
-    const createSmoothAnimation = (duration, startX, startY, card, wrap, intensity = 1) => {
+    const createSmoothAnimation = (duration, startX, startY, card, wrap) => {
       const startTime = performance.now();
       const targetX = wrap.clientWidth / 2;
       const targetY = wrap.clientHeight / 2;
 
-      const animationLoop = (currentTime) => {
+      const animationLoop = currentTime => {
         const elapsed = currentTime - startTime;
         const progress = clamp(elapsed / duration);
-        const easedProgress = easeOutQuart(progress);
+        const easedProgress = easeInOutCubic(progress);
 
         const currentX = adjust(easedProgress, 0, 1, startX, targetX);
         const currentY = adjust(easedProgress, 0, 1, startY, targetY);
 
-        updateCardTransform(currentX, currentY, card, wrap, intensity);
+        updateCardTransform(currentX, currentY, card, wrap);
 
         if (progress < 1) {
-          rafId = requestAnimationFrame(animationLoop);
+          rafIdRef.current = requestAnimationFrame(animationLoop);
         }
       };
 
-      rafId = requestAnimationFrame(animationLoop);
-    };
-
-    const createBounceAnimation = (wrap) => {
-      const startTime = performance.now();
-      
-      const bounceLoop = (currentTime) => {
-        const elapsed = currentTime - startTime;
-        const progress = clamp(elapsed / ANIMATION_CONFIG.BOUNCE_DURATION);
-        const easedProgress = easeOutBack(progress);
-        
-        const scale = 0.95 + easedProgress * 0.1;
-        wrap.style.setProperty('--bounce-scale', scale);
-        
-        if (progress < 1) {
-          rafId = requestAnimationFrame(bounceLoop);
-        }
-      };
-      
-      rafId = requestAnimationFrame(bounceLoop);
+      rafIdRef.current = requestAnimationFrame(animationLoop);
     };
 
     return {
       updateCardTransform,
       createSmoothAnimation,
-      animateGlow,
-      createBounceAnimation,
       cancelAnimation: () => {
-        if (rafId) {
-          cancelAnimationFrame(rafId);
-          rafId = null;
+        if (rafIdRef.current) {
+          cancelAnimationFrame(rafIdRef.current);
+          rafIdRef.current = null;
         }
-        if (glowRafId) {
-          cancelAnimationFrame(glowRafId);
-          glowRafId = null;
-        }
-      },
+      }
     };
   }, [enableTilt]);
 
   const handlePointerMove = useCallback(
-    (event) => {
+    event => {
       const card = cardRef.current;
       const wrap = wrapRef.current;
+
       if (!card || !wrap || !animationHandlers) return;
-      
+
       const rect = card.getBoundingClientRect();
-      animationHandlers.updateCardTransform(
-        event.clientX - rect.left,
-        event.clientY - rect.top,
-        card,
-        wrap,
-        1
-      );
+      animationHandlers.updateCardTransform(event.clientX - rect.left, event.clientY - rect.top, card, wrap);
     },
     [animationHandlers]
   );
 
   const handlePointerEnter = useCallback(() => {
-    if (!animationHandlers) return;
-    setIsHovered(true);
+    const card = cardRef.current;
+    const wrap = wrapRef.current;
+
+    if (!card || !wrap || !animationHandlers) return;
+
     animationHandlers.cancelAnimation();
-    animationHandlers.createBounceAnimation(wrapRef.current);
-    animationHandlers.animateGlow(wrapRef.current, 1);
+    wrap.classList.add('active');
+    card.classList.add('active');
   }, [animationHandlers]);
 
   const handlePointerLeave = useCallback(
-    (event) => {
+    event => {
       const card = cardRef.current;
       const wrap = wrapRef.current;
+
       if (!card || !wrap || !animationHandlers) return;
-      
-      setIsHovered(false);
+
       animationHandlers.createSmoothAnimation(
         ANIMATION_CONFIG.SMOOTH_DURATION,
         event.offsetX,
         event.offsetY,
         card,
-        wrap,
-        0
+        wrap
       );
-      animationHandlers.animateGlow(wrapRef.current, 0);
+      wrap.classList.remove('active');
+      card.classList.remove('active');
     },
     [animationHandlers]
   );
 
+  const handleDeviceOrientation = useCallback(
+    event => {
+      const card = cardRef.current;
+      const wrap = wrapRef.current;
+
+      if (!card || !wrap || !animationHandlers) return;
+
+      const { beta, gamma } = event;
+      if (!beta || !gamma) return;
+
+      animationHandlers.updateCardTransform(
+        card.clientHeight / 2 + gamma * mobileTiltSensitivity,
+        card.clientWidth / 2 + (beta - ANIMATION_CONFIG.DEVICE_BETA_OFFSET) * mobileTiltSensitivity,
+        card,
+        wrap
+      );
+    },
+    [animationHandlers, mobileTiltSensitivity]
+  );
+
   useEffect(() => {
     if (!enableTilt || !animationHandlers) return;
+
     const card = cardRef.current;
     const wrap = wrapRef.current;
+
     if (!card || !wrap) return;
 
-    card.addEventListener('pointerenter', handlePointerEnter);
-    card.addEventListener('pointermove', handlePointerMove);
-    card.addEventListener('pointerleave', handlePointerLeave);
+    const pointerMoveHandler = handlePointerMove;
+    const pointerEnterHandler = handlePointerEnter;
+    const pointerLeaveHandler = handlePointerLeave;
+    const deviceOrientationHandler = handleDeviceOrientation;
+
+    const handleClick = () => {
+      if (!enableMobileTilt || location.protocol !== 'https:') return;
+      if (typeof window.DeviceMotionEvent !== 'undefined' && typeof window.DeviceMotionEvent.requestPermission === 'function') {
+        window.DeviceMotionEvent.requestPermission()
+          .then(state => {
+            if (state === 'granted') {
+              window.addEventListener('deviceorientation', deviceOrientationHandler);
+            }
+          })
+          .catch(err => console.error(err));
+      } else {
+        window.addEventListener('deviceorientation', deviceOrientationHandler);
+      }
+    };
+
+    card.addEventListener('pointerenter', pointerEnterHandler);
+    card.addEventListener('pointermove', pointerMoveHandler);
+    card.addEventListener('pointerleave', pointerLeaveHandler);
+    if (enableMobileTilt) {
+      card.addEventListener('click', handleClick);
+    }
 
     const initialX = wrap.clientWidth - ANIMATION_CONFIG.INITIAL_X_OFFSET;
     const initialY = ANIMATION_CONFIG.INITIAL_Y_OFFSET;
-    
-    animationHandlers.updateCardTransform(initialX, initialY, card, wrap, 0.4);
-    animationHandlers.createSmoothAnimation(
-      ANIMATION_CONFIG.INITIAL_DURATION,
-      initialX,
-      initialY,
-      card,
-      wrap,
-      0.4
-    );
-    animationHandlers.animateGlow(wrapRef.current, 0.4);
+
+    animationHandlers.updateCardTransform(initialX, initialY, card, wrap);
+    animationHandlers.createSmoothAnimation(ANIMATION_CONFIG.INITIAL_DURATION, initialX, initialY, card, wrap);
 
     return () => {
-      card.removeEventListener('pointerenter', handlePointerEnter);
-      card.removeEventListener('pointermove', handlePointerMove);
-      card.removeEventListener('pointerleave', handlePointerLeave);
+      card.removeEventListener('pointerenter', pointerEnterHandler);
+      card.removeEventListener('pointermove', pointerMoveHandler);
+      card.removeEventListener('pointerleave', pointerLeaveHandler);
+      card.removeEventListener('click', handleClick);
+      window.removeEventListener('deviceorientation', deviceOrientationHandler);
       animationHandlers.cancelAnimation();
     };
   }, [
     enableTilt,
+    enableMobileTilt,
     animationHandlers,
     handlePointerMove,
     handlePointerEnter,
     handlePointerLeave,
+    handleDeviceOrientation
   ]);
+
+  const cardStyle = useMemo(
+    () => ({
+      '--icon': iconUrl ? `url(${iconUrl})` : 'none',
+      '--grain': grainUrl ? `url(${grainUrl})` : 'none',
+      '--behind-gradient': showBehindGradient ? (behindGradient ?? DEFAULT_BEHIND_GRADIENT) : 'none',
+      '--inner-gradient': innerGradient ?? DEFAULT_INNER_GRADIENT
+    }),
+    [iconUrl, grainUrl, showBehindGradient, behindGradient, innerGradient]
+  );
 
   const handleContactClick = useCallback(() => {
     onContactClick?.();
   }, [onContactClick]);
 
   return (
-    <div
-      ref={wrapRef}
-      className={`flex items-center justify-center ${className}`.trim()}
-      style={{
-        perspective: '1500px',
-        '--rotate-x': '0deg',
-        '--rotate-y': '0deg',
-        '--scale': 1,
-        '--bounce-scale': 1,
-        '--translate-z': '0px',
-        '--glow-opacity': 0.1,
-      }}
-    >
-      {/* Subtle Glow Effect */}
-      <div
-        ref={glowRef}
-        className="absolute inset-0 bg-white/10 opacity-10 transition-opacity duration-500"
-        style={{
-          opacity: 'var(--glow-opacity)',
-        }}
-      />
-      
-      <div
-        ref={cardRef}
-        className="relative w-[340px] bg-black border border-neutral-800 shadow-lg hover:shadow-xl overflow-hidden"
-        style={{
-          transform: `
-            rotateX(var(--rotate-x)) 
-            rotateY(var(--rotate-y)) 
-            scale(var(--scale)) 
-            scale(var(--bounce-scale))
-            translateZ(var(--translate-z))
-          `,
-          transformStyle: 'preserve-3d',
-          transition: 'all 0.4s cubic-bezier(0.23, 1, 0.32, 1)',
-        }}
-      >
-        {/* Avatar Section */}
-        <div className="h-48 overflow-hidden relative">
-          <img
-            className="w-full h-full object-cover transition-all duration-700 ease-out"
-            style={{
-              transform: isHovered ? 'scale(1.15) translateZ(25px)' : 'scale(1.05) translateZ(15px)',
-              filter: isHovered ? 'brightness(1.1) contrast(1.1)' : 'brightness(1) contrast(1)',
-            }}
-            src={avatarUrl}
-            alt={`${name} avatar`}
-            loading="lazy"
-          />
-        </div>
-
-        {/* Content Section */}
-        <div 
-          className="p-6 relative"
-          style={{
-            transform: 'translateZ(30px)',
-          }}
-        >
-          {/* Name & Meta Info */}
-          <div className="mb-4">
-            <h3 className="text-xl font-semibold text-white mb-2 tracking-tight">
-              {name}
-            </h3>
-            {(batch || role) && (
-              <div className="flex flex-wrap gap-2 mb-3">
-                {batch && (
-                  <span className="px-2 py-1 bg-neutral-800 text-neutral-300 text-xs font-medium">
-                    {batch}
-                  </span>
-                )}
-                {role && (
-                  <span className="px-2 py-1 bg-neutral-800 text-neutral-300 text-xs font-medium">
-                    {role}
-                  </span>
-                )}
+    <div ref={wrapRef} className={`pc-card-wrapper ${className}`.trim()} style={cardStyle}>
+      <section ref={cardRef} className="pc-card">
+        <div className="pc-inside">
+          <div className="pc-shine" />
+          <div className="pc-glare" />
+          <div className="pc-content pc-avatar-content">
+            <img
+              className="avatar"
+              src={avatarUrl}
+              alt={`${name || 'User'} avatar`}
+              loading="lazy"
+              onError={e => {
+                const target = e.target;
+                target.style.display = 'none';
+              }}
+            />
+            {showUserInfo && (
+              <div className="pc-user-info">
+                <div className="pc-user-details">
+                  <div className="pc-mini-avatar">
+                    <img
+                      src={miniAvatarUrl || avatarUrl}
+                      alt={`${name || 'User'} mini avatar`}
+                      loading="lazy"
+                      onError={e => {
+                        const target = e.target;
+                        target.style.opacity = '0.5';
+                        target.src = avatarUrl;
+                      }}
+                    />
+                  </div>
+                  <div className="pc-user-text">
+                    <div className="pc-handle">@{handle}</div>
+                    <div className="pc-status">{status}</div>
+                  </div>
+                </div>
+                <button
+                  className="pc-contact-btn"
+                  onClick={handleContactClick}
+                  style={{ pointerEvents: 'auto' }}
+                  type="button"
+                  aria-label={`Contact ${name || 'user'}`}
+                >
+                  {contactText}
+                </button>
               </div>
             )}
           </div>
-
-          {/* Description */}
-          <div className="mb-6">
-            <p className="text-sm text-neutral-400 leading-relaxed tracking-normal">
-              {description}
-            </p>
+          <div className="pc-content">
+            <div className="pc-details">
+              <h3>{name}</h3>
+              <p>{title}</p>
+            </div>
           </div>
-
-          {/* Contact Button */}
-          <button
-            className="w-full px-4 py-3 bg-white text-black text-sm font-medium hover:bg-neutral-100 active:scale-95 transition-all duration-300 overflow-hidden group relative border border-white"
-            onClick={handleContactClick}
-            type="button"
-            style={{
-              transform: 'translateZ(25px)',
-            }}
-          >
-            {/* Minimal shine effect */}
-            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -skew-x-12 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700" />
-            <span className="relative z-10 tracking-wide">{contactText}</span>
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-};
-
-// Team Section Component that integrates both
-const TeamSection = ({ members = [] }) => {
-  const [activeFilter, setActiveFilter] = useState('all');
-  const [activeRole, setActiveRole] = useState('all');
-  const [filteredMembers, setFilteredMembers] = useState(members);
-
-  // Extract unique batches and roles from members
-  const batches = useMemo(() => {
-    const uniqueBatches = [...new Set(members.map(member => member.batch))];
-    return ['all', ...uniqueBatches.sort()];
-  }, [members]);
-
-  const roles = useMemo(() => {
-    const uniqueRoles = [...new Set(members.map(member => member.role))];
-    return ['all', ...uniqueRoles.sort()];
-  }, [members]);
-
-  // Filter members based on active filters
-  useEffect(() => {
-    const filtered = members.filter(member => {
-      const batchMatch = activeFilter === 'all' || member.batch === activeFilter;
-      const roleMatch = activeRole === 'all' || member.role === activeRole;
-      return batchMatch && roleMatch;
-    });
-    setFilteredMembers(filtered);
-  }, [members, activeFilter, activeRole]);
-
-  const handleContactClick = (member) => {
-    // Handle contact logic here
-    console.log('Contacting:', member.name);
-  };
-
-  return (
-    <div className="min-h-screen bg-black">
-      {/* Team Filters */}
-      <TeamFilters
-        batches={batches}
-        roles={roles}
-        activeFilter={activeFilter}
-        activeRole={activeRole}
-        setActiveFilter={setActiveFilter}
-        setActiveRole={setActiveRole}
-        filteredMembersCount={filteredMembers.length}
-      />
-
-      {/* Team Grid */}
-      <section className="py-12 px-4 md:px-8">
-        <div className="max-w-7xl mx-auto">
-          {filteredMembers.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-              {filteredMembers.map((member, index) => (
-                <MinimalProfileCard
-                  key={member.id || index}
-                  avatarUrl={member.avatarUrl}
-                  name={member.name}
-                  description={member.description}
-                  batch={member.batch}
-                  role={member.role}
-                  contactText="Contact"
-                  onContactClick={() => handleContactClick(member)}
-                  enableTilt={true}
-                />
-              ))}
-            </div>
-          ) : (
-            <div className="text-center py-12">
-              <p className="text-neutral-400 text-lg">No team members found matching the current filters.</p>
-            </div>
-          )}
         </div>
       </section>
     </div>
   );
 };
 
-const ProfileCard = React.memo(MinimalProfileCard);
-export { ProfileCard, TeamSection };
+const ProfileCard = React.memo(ProfileCardComponent);
+
 export default ProfileCard;
