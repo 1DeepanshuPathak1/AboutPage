@@ -9,6 +9,7 @@ const HorizontalTeamScroll = ({ members }) => {
   const [containerWidth, setContainerWidth] = useState(0);
   const [windowWidth, setWindowWidth] = useState(0);
   const [isHovered, setIsHovered] = useState(false);
+  const [flippedCards, setFlippedCards] = useState({});
 
   const cardWidth = 280;
   const cardGap = 50;
@@ -71,6 +72,13 @@ const HorizontalTeamScroll = ({ members }) => {
     ["0%", "100%"]
   );
 
+  const handleFlip = (memberId) => {
+    setFlippedCards(prev => ({
+      ...prev,
+      [memberId]: !prev[memberId]
+    }));
+  };
+
   return (
     <section 
       ref={sectionRef}
@@ -99,11 +107,9 @@ const HorizontalTeamScroll = ({ members }) => {
                 enableTilt={true}
                 enableMobileTilt={true}
                 showBehindGradient={true}
-                onContactClick={() => {
-                  if (member.contactUrl) {
-                    window.open(member.contactUrl, '_blank');
-                  }
-                }}
+                isFlipped={flippedCards[member.id]}
+                onFlipClick={() => handleFlip(member.id)}
+                memberDetails={member.memberDetails}
                 batch={member.batch}
                 role={member.role}
               />

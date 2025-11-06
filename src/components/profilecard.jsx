@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useCallback, useMemo } from 'react';
+import { Code2, Github, Linkedin, Calendar, Briefcase, User } from 'lucide-react';
 import './ProfileCard.css';
 
 const DEFAULT_BEHIND_GRADIENT =
@@ -43,9 +44,10 @@ const ProfileCardComponent = ({
   title = 'Role',
   handle = 'username',
   status = 'Active',
-  contactText = 'Contact',
   showUserInfo = true,
-  onContactClick,
+  isFlipped = false,
+  onFlipClick,
+  memberDetails = {},
   batch,
   role
 }) => {
@@ -123,9 +125,8 @@ const ProfileCardComponent = ({
       const card = cardRef.current;
       const wrap = wrapRef.current;
 
-      if (!card || !wrap || !animationHandlers) return;
+      if (!card || !wrap || !animationHandlers || isFlipped) return;
 
-      // Cache the rect calculations
       if (!wrap._rect || event.timeStamp - wrap._rectTimestamp > 100) {
         wrap._rect = card.getBoundingClientRect();
         wrap._rectTimestamp = event.timeStamp;
@@ -138,26 +139,26 @@ const ProfileCardComponent = ({
         wrap
       );
     },
-    [animationHandlers]
+    [animationHandlers, isFlipped]
   );
 
   const handlePointerEnter = useCallback(() => {
     const card = cardRef.current;
     const wrap = wrapRef.current;
 
-    if (!card || !wrap || !animationHandlers) return;
+    if (!card || !wrap || !animationHandlers || isFlipped) return;
 
     animationHandlers.cancelAnimation();
     wrap.classList.add('active');
     card.classList.add('active');
-  }, [animationHandlers]);
+  }, [animationHandlers, isFlipped]);
 
   const handlePointerLeave = useCallback(
     event => {
       const card = cardRef.current;
       const wrap = wrapRef.current;
 
-      if (!card || !wrap || !animationHandlers) return;
+      if (!card || !wrap || !animationHandlers || isFlipped) return;
 
       animationHandlers.createSmoothAnimation(
         ANIMATION_CONFIG.SMOOTH_DURATION,
@@ -169,7 +170,7 @@ const ProfileCardComponent = ({
       wrap.classList.remove('active');
       card.classList.remove('active');
     },
-    [animationHandlers]
+    [animationHandlers, isFlipped]
   );
 
   const handleDeviceOrientation = useCallback(
@@ -177,7 +178,7 @@ const ProfileCardComponent = ({
       const card = cardRef.current;
       const wrap = wrapRef.current;
 
-      if (!card || !wrap || !animationHandlers) return;
+      if (!card || !wrap || !animationHandlers || isFlipped) return;
 
       const { beta, gamma } = event;
       if (!beta || !gamma) return;
@@ -189,7 +190,7 @@ const ProfileCardComponent = ({
         wrap
       );
     },
-    [animationHandlers, mobileTiltSensitivity]
+    [animationHandlers, mobileTiltSensitivity, isFlipped]
   );
 
   useEffect(() => {
@@ -200,7 +201,6 @@ const ProfileCardComponent = ({
 
     if (!card || !wrap) return;
 
-    // Use a debounced version of pointer move for better performance
     let rafId;
     const debouncedPointerMove = (e) => {
       if (rafId) cancelAnimationFrame(rafId);
@@ -272,17 +272,18 @@ const ProfileCardComponent = ({
     [iconUrl, grainUrl, showBehindGradient, behindGradient, innerGradient]
   );
 
-  const handleContactClick = useCallback(() => {
-    onContactClick?.();
-  }, [onContactClick]);
+  const handleFlipClick = useCallback(() => {
+    onFlipClick?.();
+  }, [onFlipClick]);
 
   return (
-    <div ref={wrapRef} className={`pc-card-wrapper ${className}`.trim()} style={cardStyle}>
+    <div ref={wrapRef} className={`pc-card-wrapper ${isFlipped ? 'flipped' : ''} ${className}`.trim()} style={cardStyle}>
       <section ref={cardRef} className="pc-card">
         <div className="pc-inside">
           <div className="pc-shine" />
           <div className="pc-glare" />
-          <div className="pc-content pc-avatar-content">
+          
+          <div className={`pc-content pc-avatar-content ${isFlipped ? 'hidden' : ''}`}>
             <img
               className="avatar"
               src={avatarUrl}
@@ -315,17 +316,90 @@ const ProfileCardComponent = ({
                 </div>
                 <button
                   className="pc-contact-btn"
-                  onClick={handleContactClick}
+                  onClick={handleFlipClick}
                   style={{ pointerEvents: 'auto' }}
                   type="button"
-                  aria-label={`Contact ${name || 'user'}`}
+                  aria-label="Flip card"
                 >
-                  {contactText}
+                  Flip Me
                 </button>
               </div>
             )}
           </div>
-          <div className="pc-content">
+
+          <div className={`pc-card-back ${isFlipped ? 'visible' : ''}`}>
+            <div className="pc-back-content">
+              <div className="pc-back-header">
+                <User className="pc-back-icon" size={20} />
+                <h3>{name}</h3>
+              </div>
+
+              <div className="pc-back-section">
+                <div className="pc-back-item">
+                  <Calendar size={14} />
+                  <span className="pc-back-label">Joined:</span>
+                  <span className="pc-back-value">{memberDetails.dateJoined}</span>
+                </div>
+                <div className="pc-back-item">
+                  <Briefcase size={14} />
+                  <span className="pc-back-label">Role:</span>
+                  <span className="pc-back-value">{memberDetails.role}</span>
+                </div>
+              </div>
+
+              <div className="pc-back-section">
+                <p className="pc-back-bio">{memberDetails.bio}</p>
+              </div>
+
+              <div className="pc-back-section">
+                <div className="pc-back-label">Skills:</div>
+                <div className="pc-back-skills">{memberDetails.skills}</div>
+              </div>
+
+              <div className="pc-back-links">
+                {memberDetails.portfolio && (
+                  <a 
+                    href={memberDetails.portfolio} 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="pc-back-link"
+                  >
+                    <Code2 size={18} />
+                  </a>
+                )}
+                {memberDetails.github && (
+                  <a 
+                    href={memberDetails.github} 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="pc-back-link"
+                  >
+                    <Github size={18} />
+                  </a>
+                )}
+                {memberDetails.linkedin && (
+                  <a 
+                    href={memberDetails.linkedin} 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="pc-back-link"
+                  >
+                    <Linkedin size={18} />
+                  </a>
+                )}
+              </div>
+
+              <button
+                className="pc-back-flip-btn"
+                onClick={handleFlipClick}
+                type="button"
+              >
+                Back to Profile
+              </button>
+            </div>
+          </div>
+
+          <div className={`pc-content ${isFlipped ? 'hidden' : ''}`}>
             <div className="pc-details">
               <h3>{name}</h3>
               <p>{title}</p>
