@@ -87,17 +87,6 @@
   color: rgb(245, 245, 245);
 }
 
-.button-indicator {
-  position: absolute;
-  bottom: -4px;
-  left: 0;
-  width: 100%;
-  height: 2px;
-  background: linear-gradient(to right, rgb(124, 58, 237), rgb(6, 182, 212));
-  transform-origin: left;
-  transition: transform 0.3s ease;
-}
-
 .button-indicator.active {
   transform: scaleX(1);
 }
