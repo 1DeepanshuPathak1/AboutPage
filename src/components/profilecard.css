@@ -61,8 +61,8 @@
 }
 
 .pc-card {
-  height: 80svh;
-  max-height: 540px;
+  height: 65svh;
+  max-height: 420px;
   display: grid;
   aspect-ratio: 0.718;
   border-radius: var(--card-radius);
@@ -270,8 +270,8 @@
   object-fit: contain;
   object-position: bottom;
   position: absolute;
-  bottom: -5%;
-  transform: translate3d(0, 0, 0.1px) scale(1.25);
+  bottom: 0;
+  transform: translate3d(0, 0, 0.1px) scale(1.15);
   transform-origin: bottom;
   z-index: 2;
   filter: drop-shadow(0 0 10px rgba(0, 0, 0, 0.3));
@@ -302,9 +302,9 @@
 
 .pc-user-info {
   position: absolute;
-  bottom: 20px;
-  left: 20px;
-  right: 20px;
+  bottom: 12px;
+  left: 12px;
+  right: 12px;
   z-index: 2;
   display: flex;
   align-items: center;
@@ -312,20 +312,20 @@
   background: rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(30px);
   border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 15px;
-  padding: 12px 14px;
+  border-radius: 12px;
+  padding: 8px 10px;
   pointer-events: auto;
 }
 
 .pc-user-details {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 8px;
 }
 
 .pc-mini-avatar {
-  width: 48px;
-  height: 48px;
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
   overflow: hidden;
   border: 1px solid rgba(255, 255, 255, 0.1);
@@ -343,27 +343,27 @@
   display: flex;
   align-items: flex-start;
   flex-direction: column;
-  gap: 6px;
+  gap: 4px;
 }
 
 .pc-handle {
-  font-size: 14px;
+  font-size: 12px;
   font-weight: 500;
   color: rgba(255, 255, 255, 0.9);
   line-height: 1;
 }
 
 .pc-status {
-  font-size: 14px;
+  font-size: 11px;
   color: rgba(255, 255, 255, 0.7);
   line-height: 1;
 }
 
 .pc-contact-btn {
   border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 8px;
-  padding: 8px 16px;
-  font-size: 14px;
+  border-radius: 6px;
+  padding: 6px 12px;
+  font-size: 11px;
   font-weight: 600;
   color: rgba(255, 255, 255, 0.9);
   cursor: pointer;
@@ -394,7 +394,7 @@
 .pc-details {
   width: 100%;
   position: absolute;
-  top: 3em;
+  top: 1.5em;
   display: flex;
   flex-direction: column;
 }
@@ -402,7 +402,7 @@
 .pc-details h3 {
   font-weight: 600;
   margin: 0;
-  font-size: min(5svh, 3em);
+  font-size: min(4svh, 2em);
   margin: 0;
   background-image: linear-gradient(to bottom, #fff, #6f6fbe);
   background-size: 1em 1.5em;
@@ -414,9 +414,9 @@
 .pc-details p {
   font-weight: 600;
   position: relative;
-  top: -12px;
+  top: -8px;
   white-space: nowrap;
-  font-size: 16px;
+  font-size: 14px;
   margin: 0 auto;
   width: min-content;
   background-image: linear-gradient(to bottom, #fff, #4a4ac0);
@@ -454,8 +454,8 @@
 
 @media (max-width: 768px) {
   .pc-card {
-    height: 70svh;
-    max-height: 450px;
+    height: 60svh;
+    max-height: 380px;
   }
 
   .pc-details {

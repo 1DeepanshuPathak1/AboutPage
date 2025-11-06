@@ -1,0 +1,39 @@
+.scroll-section {
+  position: relative;
+  will-change: transform;
+  z-index: 100;
+}
+
+.scroll-container {
+  position: sticky;
+  top: 0;
+  height: 80vh;
+  overflow: hidden;
+  background-color: rgb(10, 10, 10);
+  will-change: transform;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  perspective: 1000;
+  -webkit-perspective: 1000;
+  transform: translate3d(0,0,0);
+  -webkit-transform: translate3d(0,0,0);
+  display: flex;
+  padding-top: 20px;
+  padding-bottom: 20px;
+  align-items: center;
+}
+
+.progress-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background-color: rgb(38, 38, 38);
+  z-index: 150;
+}
+
+.progress-indicator {
+  height: 100%;
+  background-color: rgb(245, 245, 245);
+}

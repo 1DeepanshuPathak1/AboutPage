@@ -28,7 +28,7 @@ const adjust = (value, fromMin, fromMax, toMin, toMax) =>
 const easeInOutCubic = x => (x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2);
 
 const ProfileCardComponent = ({
-  avatarUrl = 'https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?w=400&h=400&fit=crop',
+  avatarUrl = 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400',
   iconUrl = DEFAULT_ICON_URL,
   grainUrl = DEFAULT_GRAIN_URL,
   behindGradient,
@@ -38,6 +38,7 @@ const ProfileCardComponent = ({
   enableTilt = true,
   enableMobileTilt = true,
   mobileTiltSensitivity = 5,
+  miniAvatarUrl,
   name = 'Team Member',
   title = 'Role',
   handle = 'username',
@@ -124,8 +125,18 @@ const ProfileCardComponent = ({
 
       if (!card || !wrap || !animationHandlers) return;
 
-      const rect = card.getBoundingClientRect();
-      animationHandlers.updateCardTransform(event.clientX - rect.left, event.clientY - rect.top, card, wrap);
+      // Cache the rect calculations
+      if (!wrap._rect || event.timeStamp - wrap._rectTimestamp > 100) {
+        wrap._rect = card.getBoundingClientRect();
+        wrap._rectTimestamp = event.timeStamp;
+      }
+
+      animationHandlers.updateCardTransform(
+        event.clientX - wrap._rect.left,
+        event.clientY - wrap._rect.top,
+        card,
+        wrap
+      );
     },
     [animationHandlers]
   );
@@ -189,7 +200,13 @@ const ProfileCardComponent = ({
 
     if (!card || !wrap) return;
 
-    const pointerMoveHandler = handlePointerMove;
+    // Use a debounced version of pointer move for better performance
+    let rafId;
+    const debouncedPointerMove = (e) => {
+      if (rafId) cancelAnimationFrame(rafId);
+      rafId = requestAnimationFrame(() => handlePointerMove(e));
+    };
+
     const pointerEnterHandler = handlePointerEnter;
     const pointerLeaveHandler = handlePointerLeave;
     const deviceOrientationHandler = handleDeviceOrientation;
@@ -210,8 +227,12 @@ const ProfileCardComponent = ({
     };
 
     card.addEventListener('pointerenter', pointerEnterHandler);
-    card.addEventListener('pointermove', pointerMoveHandler);
+    card.addEventListener('pointermove', debouncedPointerMove);
     card.addEventListener('pointerleave', pointerLeaveHandler);
+    
+    wrap.style.willChange = 'transform';
+    card.style.willChange = 'transform';
+    card.style.backfaceVisibility = 'hidden';
     if (enableMobileTilt) {
       card.addEventListener('click', handleClick);
     }
@@ -224,8 +245,9 @@ const ProfileCardComponent = ({
 
     return () => {
       card.removeEventListener('pointerenter', pointerEnterHandler);
-      card.removeEventListener('pointermove', pointerMoveHandler);
+      card.removeEventListener('pointermove', debouncedPointerMove);
       card.removeEventListener('pointerleave', pointerLeaveHandler);
+      if (rafId) cancelAnimationFrame(rafId);
       card.removeEventListener('click', handleClick);
       window.removeEventListener('deviceorientation', deviceOrientationHandler);
       animationHandlers.cancelAnimation();
@@ -268,7 +290,7 @@ const ProfileCardComponent = ({
               loading="lazy"
               onError={e => {
                 const target = e.target;
-                target.src = 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=400&fit=crop';
+                target.style.display = 'none';
               }}
             />
             {showUserInfo && (
@@ -276,7 +298,7 @@ const ProfileCardComponent = ({
                 <div className="pc-user-details">
                   <div className="pc-mini-avatar">
                     <img
-                      src={avatarUrl}
+                      src={miniAvatarUrl || avatarUrl}
                       alt={`${name || 'User'} mini avatar`}
                       loading="lazy"
                       onError={e => {

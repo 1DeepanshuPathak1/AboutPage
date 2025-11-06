@@ -1,44 +1,88 @@
-import { useRef } from 'react';
-import { motion, useScroll, useTransform } from 'framer-motion';
+import { useRef, useState, useCallback, useEffect, useLayoutEffect } from 'react';
+import { motion, useScroll, useSpring, useTransform } from 'framer-motion';
 import ProfileCard from './ProfileCard';
+import './HorizontalTeamScroll.css';
 
 const HorizontalTeamScroll = ({ members }) => {
   const targetRef = useRef(null);
+  const containerRef = useRef(null);
+  const [containerWidth, setContainerWidth] = useState(0);
+  const [windowWidth, setWindowWidth] = useState(0);
+
+  const cardWidth = 280;
+  const cardGap = 50;
+
+  useLayoutEffect(() => {
+    const updateSize = () => {
+      if (containerRef.current) {
+        const totalWidth = members.length * (cardWidth + cardGap) - cardGap;
+        setContainerWidth(totalWidth);
+        setWindowWidth(window.innerWidth);
+      }
+    };
+    updateSize();
+    window.addEventListener('resize', updateSize);
+    return () => window.removeEventListener('resize', updateSize);
+  }, [members.length, cardWidth, cardGap]);
+
   const { scrollYProgress } = useScroll({
     target: targetRef,
-    offset: ["start start", "end end"],
-    smooth: 10,
+    offset: ["start start", "end end"]
   });
 
-  // Smoothing configuration for the horizontal movement
-  const smoothConfig = {
-    damping: 20,
+  const smoothProgress = useSpring(scrollYProgress, {
+    damping: 50,
     mass: 0.5,
-    stiffness: 100,
+    stiffness: 200,
+    restDelta: 0.001
+  });
+
+  const distance = containerWidth - windowWidth;
+  const x = useTransform(smoothProgress, [0, 1], [0, -distance]);
+  const springX = useSpring(x, {
+    damping: 50,
+    mass: 0.5,
+    stiffness: 200,
+    restDelta: 0.001
+  });
+
+  const progressWidth = useTransform(smoothProgress, [0, 1], ["0%", "100%"]);
+
+  const smoothConfig = {
+    damping: 50,
+    mass: 0.5,
+    stiffness: 200,
+    restDelta: 0.001
   };
 
-  const cardWidth = 400;
-  const cardGap = 32;
-  const totalWidth = members.length * (cardWidth + cardGap);
-  const viewportWidth = typeof window !== 'undefined' ? window.innerWidth : 1200;
-  const scrollDistance = Math.max(0, totalWidth - viewportWidth + 200);
-
-  const x = useTransform(scrollYProgress, [0, 1], ["0px", `-${scrollDistance}px`]);
-  const progressWidth = useTransform(scrollYProgress, [0, 1], ["0%", "100%"]);
-
   return (
-    <section ref={targetRef} className="relative will-change-transform" style={{ height: `${members.length * 100}vh` }}>
-      <div className="sticky top-0 flex h-screen items-center overflow-hidden bg-neutral-950" style={{ willChange: 'transform' }}>
+    <section 
+      ref={targetRef}
+      className="scroll-section" 
+      style={{ height: `${members.length * 80}vh` }}
+    >
+      <div className="scroll-container">
         <motion.div 
-          style={{ x }} 
-          className="flex gap-8 px-8 md:px-12"
-          transition={smoothConfig}
+          ref={containerRef}
+          style={{ 
+            x: springX,
+            gap: `${cardGap}px`,
+            display: 'flex',
+            padding: '0 32px'
+          }}
+          layoutScroll
         >
           {members.map((member) => (
-            <div 
+            <motion.div 
               key={member.id} 
-              className="flex-shrink-0"
-              style={{ width: `${cardWidth}px` }}
+              style={{ 
+                width: `${cardWidth}px`,
+                maxHeight: '75vh',
+                flexShrink: 0,
+                willChange: 'transform',
+                WebkitBackfaceVisibility: 'hidden',
+              }}
+              layout
             >
               <ProfileCard
                 avatarUrl={member.avatarUrl}
@@ -58,16 +102,14 @@ const HorizontalTeamScroll = ({ members }) => {
                 batch={member.batch}
                 role={member.role}
               />
-            </div>
+            </motion.div>
           ))}
         </motion.div>
 
-        <div className="absolute bottom-20 left-1/2 -translate-x-1/2 flex items-center gap-3 opacity-40 hover:opacity-100 transition-opacity duration-300 z-20">
-        </div>
-        <div className="absolute top-0 left-0 right-0 h-0.5 bg-neutral-800 z-20">
+        <div className="progress-bar">
           <motion.div 
             style={{ width: progressWidth }} 
-            className="h-full bg-neutral-100"
+            className="progress-indicator"
             transition={smoothConfig}
           />
         </div>
