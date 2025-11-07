@@ -1,5 +1,316 @@
-.about-intro {
+.intro-wrapper {
+  position: relative;
   min-height: 100vh;
+  width: 100%;
   background: #000000;
+  overflow: hidden;
+}
+
+.intro-container {
+  position: relative;
+  min-height: 100vh;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: #000000;
+  will-change: transform;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.intro-background {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  will-change: filter;
+  transition: filter 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  background: #000000;
+}
+
+.grid-pattern {
+  position: absolute;
+  inset: 0;
+  background-image: 
+    linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+  background-size: 50px 50px;
+  mask-image: radial-gradient(ellipse 80% 50% at 50% 50%, black 40%, transparent 100%);
+  -webkit-mask-image: radial-gradient(ellipse 80% 50% at 50% 50%, black 40%, transparent 100%);
+}
+
+.gradient-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.2;
+  animation: float 15s ease-in-out infinite;
+}
+
+.gradient-orb-1 {
+  width: 500px;
+  height: 500px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  top: -15%;
+  left: -10%;
+  animation-delay: 0s;
+}
+
+.gradient-orb-2 {
+  width: 450px;
+  height: 450px;
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  bottom: -15%;
+  right: -5%;
+  animation-delay: -5s;
+}
+
+.gradient-orb-3 {
+  width: 400px;
+  height: 400px;
+  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  animation-delay: -10s;
+}
+
+.gradient-orb-4 {
+  width: 350px;
+  height: 350px;
+  background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+  top: 20%;
+  right: 10%;
+  animation-delay: -3s;
+}
+
+.gradient-orb-5 {
+  width: 380px;
+  height: 380px;
+  background: linear-gradient(135deg, #30cfd0 0%, #330867 100%);
+  bottom: 30%;
+  left: 15%;
+  animation-delay: -8s;
+}
+
+.gradient-orb-6 {
+  width: 420px;
+  height: 420px;
+  background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+  top: 60%;
+  right: 20%;
+  animation-delay: -12s;
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translate(0, 0) scale(1);
+  }
+  25% {
+    transform: translate(50px, -50px) scale(1.15);
+  }
+  50% {
+    transform: translate(-40px, 40px) scale(0.9);
+  }
+  75% {
+    transform: translate(30px, 60px) scale(1.05);
+  }
+}
+
+.intro-content {
+  position: relative;
+  z-index: 10;
+  text-align: center;
+  padding: 0 24px;
+  max-width: 1200px;
+  will-change: transform;
+}
+
+.intro-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 20px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 100px;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  margin-bottom: 32px;
+  backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
+}
+
+.intro-badge:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.2);
+  transform: translateY(-2px);
+}
+
+.badge-icon {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.intro-title {
+  font-size: clamp(3rem, 8vw, 7rem);
+  font-weight: 700;
+  line-height: 1.1;
   color: #ffffff;
+  margin: 0 0 24px 0;
+  letter-spacing: -0.02em;
+}
+
+.title-gradient {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  display: inline-block;
+  position: relative;
+}
+
+.intro-description {
+  font-size: clamp(1rem, 2vw, 1.25rem);
+  color: rgba(255, 255, 255, 0.6);
+  line-height: 1.8;
+  margin: 0 0 48px 0;
+  max-width: 700px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.intro-stats {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 48px;
+  margin-bottom: 80px;
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.stat-number {
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 700;
+  color: #ffffff;
+  line-height: 1;
+}
+
+.stat-label {
+  font-size: 12px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.4);
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+}
+
+.stat-divider {
+  width: 1px;
+  height: 40px;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.scroll-indicator {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  animation: bounce 2s ease-in-out infinite;
+}
+
+.scroll-line {
+  width: 1px;
+  height: 60px;
+  background: linear-gradient(to bottom, rgba(255, 255, 255, 0.4), transparent);
+  position: relative;
+}
+
+.scroll-line::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 4px;
+  height: 20px;
+  background: rgba(255, 255, 255, 0.6);
+  border-radius: 2px;
+  animation: scroll-down 2s ease-in-out infinite;
+}
+
+@keyframes scroll-down {
+  0%, 100% {
+    transform: translateX(-50%) translateY(0);
+    opacity: 0;
+  }
+  50% {
+    transform: translateX(-50%) translateY(30px);
+    opacity: 1;
+  }
+}
+
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.scroll-text {
+  font-size: 11px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.4);
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+}
+
+@media (max-width: 768px) {
+  .intro-stats {
+    gap: 32px;
+  }
+
+  .stat-divider {
+    height: 30px;
+  }
+
+  .intro-description {
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .intro-badge {
+    font-size: 10px;
+    padding: 6px 16px;
+  }
+
+  .intro-stats {
+    gap: 24px;
+  }
+
+  .stat-number {
+    font-size: 2rem;
+  }
+
+  .stat-label {
+    font-size: 10px;
+  }
+
+  .stat-divider {
+    height: 25px;
+  }
+
+  .scroll-indicator {
+    margin-top: 40px;
+  }
 }

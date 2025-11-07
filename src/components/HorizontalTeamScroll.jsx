@@ -22,6 +22,11 @@ const HorizontalTeamScroll = ({ members }) => {
     restDelta: 0.001
   });
 
+  useEffect(() => {
+    scrollProgress.set(0);
+    setFlippedCards({});
+  }, [members, scrollProgress]);
+
   useLayoutEffect(() => {
     const updateSize = () => {
       if (containerRef.current) {
